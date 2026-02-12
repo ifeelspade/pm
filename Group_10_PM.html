@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Management Case Studies</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --surface: #111318;
+      --surface2: #161a22;
+      --border: rgba(255,255,255,0.07);
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --fail: #ff4d6d;
+      --fail-dim: rgba(255,77,109,0.12);
+      --fail-glow: rgba(255,77,109,0.3);
+      --success: #00d9a3;
+      --success-dim: rgba(0,217,163,0.12);
+      --success-glow: rgba(0,217,163,0.3);
+      --accent: #f59e0b;
+      --accent-dim: rgba(245,158,11,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: -80px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .sidebar-brand {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand .logo-tag {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .sidebar-brand h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .nav {
+      flex: 1;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 8px 10px 6px;
+      margin-top: 4px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      text-align: left;
+      padding: 11px 14px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .nav-btn .nav-icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-btn.active { background: rgba(255,255,255,0.07); color: var(--text); font-weight: 500; }
+    .nav-btn.active .nav-icon.fail-icon { background: var(--fail-dim); }
+    .nav-btn.active .nav-icon.success-icon { background: var(--success-dim); }
+    .nav-btn.active .nav-icon.overview-icon { background: var(--accent-dim); }
+    .nav-btn.active .nav-icon.rec-icon { background: rgba(139,92,246,0.15); }
+    .nav-btn.fail-btn.active { border-left: 2px solid var(--fail); }
+    .nav-btn.success-btn.active { border-left: 2px solid var(--success); }
+    .nav-btn.overview-btn.active { border-left: 2px solid var(--accent); }
+    .nav-btn.rec-btn.active { border-left: 2px solid #8b5cf6; }
+
+    .sidebar-footer {
+      padding: 18px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+    .content::-webkit-scrollbar { width: 6px; }
+    .content::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+    .section { display: none; }
+    .section.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      padding: 40px 48px 32px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 400px; height: 100%;
+      background: linear-gradient(to left, rgba(245,158,11,0.04), transparent);
+      pointer-events: none;
+    }
+    .page-header.fail-header::after { background: linear-gradient(to left, rgba(255,77,109,0.06), transparent); }
+    .page-header.success-header::after { background: linear-gradient(to left, rgba(0,217,163,0.06), transparent); }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .badge-fail { background: var(--fail-dim); color: var(--fail); border: 1px solid rgba(255,77,109,0.25); }
+    .badge-success { background: var(--success-dim); color: var(--success); border: 1px solid rgba(0,217,163,0.25); }
+    .badge-overview { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(245,158,11,0.25); }
+    .badge-rec { background: rgba(139,92,246,0.12); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25); }
+
+    .page-header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .page-header p {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .meta-item .meta-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .meta-item .meta-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .meta-value.fail-val { color: var(--fail); }
+    .meta-value.success-val { color: var(--success); }
+
+    /* ─── BODY CONTENT ─── */
+    .body-content { padding: 36px 48px 60px; }
+
+    /* SECTION BLOCKS */
+    .block {
+      margin-bottom: 40px;
+    }
+    .block-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .block-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-num.fail-step { background: var(--fail-dim); color: var(--fail); }
+    .step-num.success-step { background: var(--success-dim); color: var(--success); }
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* TABLES */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--surface2); }
+    th {
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+    td:first-child {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .id-fail { color: var(--fail); }
+    .id-success { color: var(--success); }
+    .id-neutral { color: var(--accent); }
+
+    /* NETWORK DIAGRAM */
+    .network-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      font-family: 'DM Sans', monospace;
+      font-size: 14px;
+      color: #94a3b8;
+      overflow-x: auto;
+      line-height: 1.8;
+    }
+    .network-diagram .arrow { color: #4b5563; }
+    .network-diagram .node-fail { color: var(--fail); font-weight: 700; }
+    .network-diagram .node-success { color: var(--success); font-weight: 700; }
+
+    /* GANTT CHART */
+    .gantt-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .gantt-header {
+      background: var(--surface2);
+      padding: 14px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gantt-body { padding: 20px; }
+    .gantt-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+    .gantt-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .gantt-track {
+      flex: 1;
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .gantt-bar {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+    }
+    .bar-fail { background: linear-gradient(to right, var(--fail), rgba(255,77,109,0.6)); }
+    .bar-success { background: linear-gradient(to right, var(--success), rgba(0,217,163,0.6)); }
+    .bar-neutral { background: linear-gradient(to right, var(--accent), rgba(245,158,11,0.6)); }
+    .gantt-meta {
+      font-size: 11px;
+      color: var(--muted);
+      width: 120px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    /* INSIGHT BOXES */
+    .insight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .insight-card .ic-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .insight-card .ic-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .insight-card .ic-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .ic-fail { color: var(--fail); }
+    .ic-success { color: var(--success); }
+    .ic-accent { color: var(--accent); }
+
+    /* IMPROVEMENT BULLETS */
+    .improvement-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .improvement-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .improvement-item .ii-icon {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .ii-fail { background: var(--fail-dim); }
+    .ii-success { background: var(--success-dim); }
+    .ii-rec { background: rgba(139,92,246,0.15); }
+
+    /* COMPARISON CALLOUT */
+    .compare-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .compare-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--fail), transparent 40%, transparent 60%, var(--success));
+    }
+
+    /* OVERVIEW TWO COL */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .case-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .case-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      right: 0; height: 3px;
+    }
+    .case-card.fail-card::before { background: var(--fail); }
+    .case-card.success-card::before { background: var(--success); }
+    .case-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .case-card p {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.65;
+    }
+    .case-card .card-stat {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 20px;
+    }
+    .card-stat-item { display: flex; flex-direction: column; gap: 2px; }
+    .card-stat-item .cs-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+    .card-stat-item .cs-val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+
+    /* RECOMMENDATIONS */
+    .rec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .rec-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .rec-card .rc-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.06);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .rec-card .rc-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .rec-card .rc-body {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 36px 0;
+    }
+
+    .verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .verdict-fail { background: var(--fail-dim); color: var(--fail); }
+    .verdict-success { background: var(--success-dim); color: var(--success); }
+
+    /* ─── WBS TREE ─── */
+    .wbs-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow-x: auto;
+      padding: 28px 20px 20px;
+    }
+    .wbs-tree {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 820px;
+    }
+    .wbs-root {
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1;
+    }
+    .wbs-root.root-fail { background: var(--fail-dim); border: 1.5px solid rgba(255,77,109,0.35); color: var(--fail); }
+    .wbs-root.root-success { background: var(--success-dim); border: 1.5px solid rgba(0,217,163,0.35); color: var(--success); }
+    .wbs-root.root-neutral { background: var(--accent-dim); border: 1.5px solid rgba(245,158,11,0.35); color: var(--accent); }
+
+    /* vertical line from root down */
+    .wbs-vline {
+      width: 2px;
+      height: 24px;
+      background: var(--border);
+    }
+    /* horizontal bar */
+    .wbs-hbar-wrap {
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+      width: 100%;
+      justify-content: center;
+    }
+    .wbs-hbar {
+      position: absolute;
+      top: 0;
+      height: 2px;
+      background: var(--border);
+    }
+    /* level-1 columns */
+    .wbs-l1-cols {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      justify-content: space-around;
+      position: relative;
+    }
+    .wbs-l1-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+    .wbs-l1-col::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      width: 2px; height: 24px;
+      background: var(--border);
+      transform: translateX(-50%);
+    }
+    .wbs-l1-node {
+      margin-top: 24px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      min-width: 110px;
+      max-width: 130px;
+      line-height: 1.3;
+      position: relative;
+      z-index: 1;
+    }
+    .l1-fail { background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.2); color: #fca5a5; }
+    .l1-success { background: rgba(0,217,163,0.08); border: 1px solid rgba(0,217,163,0.2); color: #6ee7b7; }
+    .l1-neutral { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #fcd34d; }
+
+    /* vline from l1 to l2 */
+    .wbs-l1-col .sub-vline {
+      width: 2px;
+      height: 20px;
+      background: var(--border);
+    }
+    /* l2 nodes */
+    .wbs-l2-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+    .wbs-l2-node {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 400;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+      min-width: 100px;
+      max-width: 120px;
+      line-height: 1.3;
+    }
+
+    /* ─── VISUAL NETWORK DIAGRAM ─── */
+    .net-diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 20px;
+      overflow-x: auto;
+    }
+    .net-svg {
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ─── CRITICAL PATH ─── */
+    .cp-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .cp-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .cp-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .cp-dot-critical { background: #facc15; box-shadow: 0 0 6px rgba(250,204,21,0.6); }
+    .cp-dot-normal { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); }
+    .cp-dot-float { background: rgba(99,102,241,0.5); border: 1px solid rgba(99,102,241,0.4); }
+    .cp-line-critical { width: 22px; height: 2.5px; background: #facc15; box-shadow: 0 0 4px rgba(250,204,21,0.5); border-radius: 2px; }
+    .cp-line-normal { width: 22px; height: 2px; background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+    /* CP row highlighting in tables */
+    tr.cp-row td { background: rgba(250,204,21,0.05) !important; }
+    tr.cp-row td:first-child { color: #facc15 !important; }
+    tr.cp-row { border-left: 2px solid rgba(250,204,21,0.5); }
+    .cp-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      background: rgba(250,204,21,0.15);
+      color: #facc15;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .float-zero { color: #facc15; font-weight: 700; }
+    .float-pos { color: #6366f1; }
+
+    /* CP gantt bar highlight */
+    .bar-critical {
+      background: linear-gradient(to right, #facc15, rgba(250,204,21,0.7));
+      box-shadow: 0 0 8px rgba(250,204,21,0.4);
+    }
+    .gantt-row.cp-gantt .gantt-label { color: #facc15; }
+    .gantt-row.cp-gantt .gantt-track {
+      background: rgba(250,204,21,0.08);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <span class="logo-tag">GROUP 10</span>
+    <h1>Project Management Analysis</h1>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Navigation</div>
+    <button class="nav-btn overview-btn active" onclick="showSection('overview', this)">
+      <div class="nav-icon overview-icon">🗂️</div>
+      Overview
+    </button>
+    <button class="nav-btn fail-btn" onclick="showSection('delhi', this)">
+      <div class="nav-icon fail-icon">🔴</div>
+      Delhi CWG 2010
+    </button>
+    <button class="nav-btn success-btn" onclick="showSection('nasa', this)">
+      <div class="nav-icon success-icon">🟢</div>
+      NASA Perseverance
+    </button>
+    <button class="nav-btn rec-btn" onclick="showSection('Rec', this)">
+      <div class="nav-icon rec-icon">💡</div>
+      Recommendations
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    Project Management · Group 10
+  </div>
+</div>
+
+<!-- ─── CONTENT AREA ─── -->
+<div class="content">
+
+  <!-- ══════════ OVERVIEW ══════════ -->
+  <div id="overview" class="section active">
+    <div class="page-header">
+      <div class="header-badge badge-overview">📊 Comparative Study</div>
+      <h1>Project Management<br>Case Study Overview</h1>
+      <p>A comparative analysis of two landmark projects — examining what makes a project succeed or fail at scale.</p>
+    </div>
+    <div class="body-content">
+
+      <div class="two-col">
+        <div class="case-card fail-card">
+          <span class="verdict verdict-fail">● Failure</span>
+          <h3 style="margin-top:12px">Delhi Commonwealth<br>Games 2010</h3>
+          <p>Executed under the Government of India, Delhi Government, and Organising Committee. Involved large-scale infrastructure including stadiums, athlete villages, transport systems, IT, and security.</p>
+          <p style="margin-top:10px">Considered a project management failure due to severe cost overruns, schedule delays, governance weaknesses, corruption, and poor milestone control.</p>
+          <div class="card-stat">
+            <div class="card-stat-item">
+              <span class="cs-label">Total Cost</span>
+              <span class="cs-val" style="color:var(--fail)">₹70,000+ Cr</span>
+            </div>
+            <div class="card-stat-item">
+              <span class="cs-label">Timeline</span>
+              <span class="cs-val">3,780 days</span>
+            </div>
+          </div>
+        </div>
+        <div class="case-card success-card">
+          <span class="verdict verdict-success">● Success</span>
+          <h3 style="margin-top:12px">NASA Mars<br>Perseverance Rover</h3>
+          <p>Led by NASA's Jet Propulsion Laboratory (JPL). Objective was to design, build, test, and successfully land a rover on Mars for scientific exploration.</p>
+          <p style="margin-top:10px">Considered a success due to disciplined planning, rigorous testing, strong systems engineering, effective risk mitigation, and strict schedule control.</p>
+          <div class="card-stat">
+            <div class="card-stat-item">
+              <span class="cs-label">Total Cost</span>
+              <span class="cs-val" style="color:var(--success)">$2.7 Billion</span>
+            </div>
+            <div class="card-stat-item">
+              <span class="cs-label">Timeline</span>
+              <span class="cs-val">5,107 days</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Key Insight</div>
+      <div class="compare-card">
+        <h3 style="font-family:'Syne',sans-serif; font-size:17px; font-weight:700; margin-bottom:12px;">Project success is not about budget size or ambition</h3>
+        <p style="color:#94a3b8; font-size:14px; line-height:1.7;">
+          These two cases demonstrate that project outcomes are determined by <strong style="color:var(--text)">planning quality, governance strength, risk management discipline,</strong> and effective control of the critical path. While weak coordination and oversight led to failure in Delhi, structured systems engineering and strong management ensured NASA's mission success — despite the latter being orders of magnitude more technically complex.
+        </p>
+      </div>
+
+      <div class="insight-grid" style="margin-top:24px;">
+        <div class="insight-card">
+          <div class="ic-label">Delhi — Cost Overrun</div>
+          <div class="ic-value ic-fail">~4×</div>
+          <div class="ic-sub">Original estimates exceeded</div>
+        </div>
+        <div class="insight-card">
+          <div class="ic-label">Delhi — Timeline Reduction Possible</div>
+          <div class="ic-value ic-accent">49.7%</div>
+          <div class="ic-sub">If better managed (3,780 → 1,900 days)</div>
+        </div>
+        <div class="insight-card">
+          <div class="ic-label">NASA — On Budget</div>
+          <div class="ic-value ic-success">✓</div>
+          <div class="ic-sub">$2.7B delivered within scope</div>
+        </div>
+        <div class="insight-card">
+          <div class="ic-label">NASA — Timeline Reduction Possible</div>
+          <div class="ic-value" style="color:#a78bfa;">20.6%</div>
+          <div class="ic-sub">Optimised: 5,107 → 4,057 days</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ DELHI ══════════ -->
+  <div id="delhi" class="section">
+    <div class="page-header fail-header">
+      <div class="header-badge badge-fail">🔴 Failure Case</div>
+      <h1>Delhi Commonwealth<br>Games 2010</h1>
+      <p>An event with governance failure, cost escalation, and schedule collapse at national scale.</p>
+      <div class="meta-row">
+        <div class="meta-item">
+          <span class="meta-label">Responsible</span>
+          <span class="meta-value">Govt. of India / Delhi Govt.</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Total Cost</span>
+          <span class="meta-value fail-val">₹70,000+ Crore</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Duration</span>
+          <span class="meta-value">3,780 days</span>
+        </div>
+      </div>
+    </div>
+    <div class="body-content">
+
+      <!-- Step 1 -->
+      <div class="step-badge">
+        <div class="step-num fail-step">1</div>
+        <div class="step-title">Actual Execution</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Network Diagram — Actual</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div>Critical Path node (Float = 0)</div>
+          <div class="cp-legend-item"><div class="cp-line-critical"></div>Critical Path link</div>
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-normal"></div>Non-critical node</div>
+          <div class="cp-legend-item"><div class="cp-line-normal"></div>Non-critical link</div>
+          <div class="cp-legend-item" style="margin-left:auto;font-size:11px;color:#facc15;font-weight:700;">Critical Path: A → B → D → F → H &nbsp;=&nbsp; 3,780 days</div>
+        </div>
+        <div class="net-diagram-wrap">
+            <svg class="net-svg" width="780" height="200" viewBox="0 0 780 200">
+              <defs>
+                <marker id="arr-cp" markerWidth="5" markerHeight="5" refX="3.5" refY="2" orient="auto">
+                  <path d="M0,0 L0,4 L4,2 z" fill="#facc15"/>
+                </marker>
+                <marker id="arr-ncp-fail" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.2)"/>
+                </marker>
+                <filter id="cp-glow"
+                        x="-200%" y="-200%"
+                        width="500%" height="500%">
+                  <feGaussianBlur stdDeviation="2" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+
+
+
+              </defs>
+
+              <!-- ── NON-CRITICAL PATH (dim) ── -->
+              <!-- A → C branch -->
+              <line x1="65" y1="148" x2="65" y2="166" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <line x1="65" y1="166" x2="152" y2="166" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <line x1="152" y1="166" x2="152" y2="73" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
+              <!-- C→E -->
+              <line x1="208" y1="55" x2="270" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
+              <!-- E→G (SS, dashed) -->
+              <line x1="340" y1="55" x2="410" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ncp-fail)"/>
+              <!-- G→H -->
+              <line x1="480" y1="55" x2="560" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <line x1="560" y1="55" x2="560" y2="118" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
+
+              <!-- ── CRITICAL PATH nodes (golden glow) ── -->
+              <!-- A -->
+              <rect x="20" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+              <text x="55" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">A</text>
+              <text x="55" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Approval</text>
+              <!-- B -->
+              <rect x="140" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+              <text x="175" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">B</text>
+              <text x="175" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Stadium</text>
+              <!-- D -->
+              <rect x="270" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+              <text x="305" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">D</text>
+              <text x="305" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Transport</text>
+              <!-- F -->
+              <rect x="410" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+              <text x="445" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">F</text>
+              <text x="445" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">IT Systems</text>
+              <!-- H (end) -->
+              <rect x="555" y="112" width="80" height="36" rx="8" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="2.5" filter="url(#cp-glow)"/>
+              <text x="595" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">H</text>
+              <text x="595" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Event Ops</text>
+
+              <!-- ── NON-CRITICAL nodes (dim) ── -->
+              <!-- C -->
+              <rect x="140" y="37" width="68" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+              <text x="174" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">C</text>
+              <text x="174" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Athlete Vill.</text>
+              <!-- E -->
+              <rect x="270" y="37" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+              <text x="305" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">E</text>
+              <text x="305" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Utilities</text>
+              <!-- G -->
+              <rect x="410" y="37" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+              <text x="445" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">G</text>
+              <text x="445" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Security</text>
+              <text x="377" y="48" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(255,255,255,0.3)">SS</text>
+
+              <!-- Float labels on non-critical -->
+              <text x="174" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
+              <text x="305" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
+              <text x="445" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
+
+              <!-- Legend -->
+              <line x1="650" y1="38" x2="670" y2="38" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <text x="675" y="42" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">FS dependency</text>
+              <line x1="650" y1="56" x2="670" y2="56" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="675" y="60" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">SS dependency</text>
+
+              <text x="174" y="25" text-anchor="middle" font-size="8" fill="#6366f1">Float: 1,100d</text>
+              <text x="305" y="25" text-anchor="middle" font-size="8" fill="#6366f1">Float: 1,100d</text>
+              <text x="445" y="25" text-anchor="middle" font-size="8" fill="#6366f1">Float: 1,100d</text>
+
+              <!-- ── CRITICAL PATH arrows: A→B→D→F→H (golden, glowing) ── -->
+              <g>
+                <line x1="90" y1="130" x2="132" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
+                <line x1="210" y1="130" x2="262" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
+                <line x1="340" y1="130" x2="402" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
+                <line x1="480" y1="130" x2="542" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
+              </g>
+            </svg>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">WBS — Work Breakdown Structure</div>
+        <div class="wbs-container">
+          <div class="wbs-tree">
+            <!-- Root -->
+            <div class="wbs-root root-fail">Delhi Commonwealth Games 2010</div>
+            <div class="wbs-vline"></div>
+            <!-- L1 columns -->
+            <div class="wbs-l1-cols">
+              <!-- 1. Project Approval -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">1.0<br>Project Approval</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">1.1 Govt. Sanction</div>
+                  <div class="wbs-l2-node">1.2 Budget Allocation</div>
+                  <div class="wbs-l2-node">1.3 Committee Setup</div>
+                </div>
+              </div>
+              <!-- 2. Stadium -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">2.0<br>Stadium Construction</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">2.1 Design & Tender</div>
+                  <div class="wbs-l2-node">2.2 Civil Works</div>
+                  <div class="wbs-l2-node">2.3 Seating & Facilities</div>
+                  <div class="wbs-l2-node">2.4 Testing</div>
+                </div>
+              </div>
+              <!-- 3. Athlete Village -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">3.0<br>Athlete Village</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">3.1 Housing Blocks</div>
+                  <div class="wbs-l2-node">3.2 Dining & Recreation</div>
+                  <div class="wbs-l2-node">3.3 Medical Centre</div>
+                </div>
+              </div>
+              <!-- 4. Transport -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">4.0<br>Transport Infra</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">4.1 Road Upgrades</div>
+                  <div class="wbs-l2-node">4.2 Metro Extensions</div>
+                  <div class="wbs-l2-node">4.3 Bus Fleet</div>
+                </div>
+              </div>
+              <!-- 5. Utilities -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">5.0<br>Utilities</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">5.1 Power Supply</div>
+                  <div class="wbs-l2-node">5.2 Water & Drainage</div>
+                  <div class="wbs-l2-node">5.3 Waste Mgmt.</div>
+                </div>
+              </div>
+              <!-- 6. IT Systems -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">6.0<br>IT Systems</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">6.1 Ticketing</div>
+                  <div class="wbs-l2-node">6.2 Broadcast Tech</div>
+                  <div class="wbs-l2-node">6.3 Comms Network</div>
+                </div>
+              </div>
+              <!-- 7. Security -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">7.0<br>Security</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">7.1 Personnel Deployment</div>
+                  <div class="wbs-l2-node">7.2 Surveillance</div>
+                  <div class="wbs-l2-node">7.3 Access Control</div>
+                </div>
+              </div>
+              <!-- 8. Event Ops -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-fail">8.0<br>Event Operations</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">8.1 Opening Ceremony</div>
+                  <div class="wbs-l2-node">8.2 Competition Mgmt.</div>
+                  <div class="wbs-l2-node">8.3 Closing Ceremony</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Activity Table — Actual</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">Critical Path (Float = 0)</span></div>
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-float"></div><span>Non-Critical (Float > 0)</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Activity</th><th>Dep.</th><th>Start</th><th>Finish</th><th>Duration</th><th>Cost ₹Cr</th><th>Float</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cp-row"><td>A</td><td>Project Approval <span class="cp-badge">CP</span></td><td>—</td><td>0</td><td>180</td><td>180d</td><td>500</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>B</td><td>Stadium Construction <span class="cp-badge">CP</span></td><td>A (FS)</td><td>180</td><td>1,680</td><td>1,500d</td><td>20,000</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-fail">C</td><td>Athlete Village</td><td>A (FS)</td><td>180</td><td>1,280</td><td>1,100d</td><td>8,000</td><td class="float-pos">1,100</td></tr>
+              <tr class="cp-row"><td>D</td><td>Transport Infrastructure <span class="cp-badge">CP</span></td><td>B (FS)</td><td>1,680</td><td>2,980</td><td>1,300d</td><td>15,000</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-fail">E</td><td>Utilities</td><td>C (FS)</td><td>1,280</td><td>1,980</td><td>700d</td><td>5,000</td><td class="float-pos">1,100</td></tr>
+              <tr class="cp-row"><td>F</td><td>IT Systems <span class="cp-badge">CP</span></td><td>D (FS)</td><td>2,980</td><td>3,480</td><td>500d</td><td>4,000</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-fail">G</td><td>Security</td><td>E (SS)</td><td>1,380</td><td>1,780</td><td>400d</td><td>3,000</td><td class="float-pos">1,100</td></tr>
+              <tr class="cp-row"><td>H</td><td>Event Operations <span class="cp-badge">CP</span></td><td>F, G (FS)</td><td>3,480</td><td>3,780</td><td>300d</td><td>2,500</td><td class="float-zero">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Gantt Chart — Actual (0–3,780 days)</div>
+        <div class="gantt-container">
+          <div class="gantt-header">📅 Timeline Visualisation &nbsp;·&nbsp; <span style="color:#facc15;font-size:10px;">⬛ = Critical Path</span></div>
+          <div class="gantt-body">
+            <div class="gantt-row cp-gantt"><div class="gantt-label">A</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:0%;width:4.8%"></div></div><div class="gantt-meta">0 – 180</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">B</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:4.8%;width:39.7%"></div></div><div class="gantt-meta">180 – 1,680</div></div>
+            <div class="gantt-row"><div class="gantt-label id-fail">C</div><div class="gantt-track"><div class="gantt-bar bar-fail" style="left:4.8%;width:29.1%"></div></div><div class="gantt-meta">180 – 1,280</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">D</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:44.4%;width:34.4%"></div></div><div class="gantt-meta">1,680 – 2,980</div></div>
+            <div class="gantt-row"><div class="gantt-label id-fail">E</div><div class="gantt-track"><div class="gantt-bar bar-fail" style="left:33.9%;width:18.5%"></div></div><div class="gantt-meta">1,280 – 1,980</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">F</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:78.8%;width:13.2%"></div></div><div class="gantt-meta">2,980 – 3,480</div></div>
+            <div class="gantt-row"><div class="gantt-label id-fail">G</div><div class="gantt-track"><div class="gantt-bar bar-fail" style="left:36.5%;width:10.6%"></div></div><div class="gantt-meta">1,380 – 1,780</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">H</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:92%;width:7.9%"></div></div><div class="gantt-meta">3,480 – 3,780</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Step 2 -->
+      <div class="step-badge">
+        <div class="step-num" style="background:rgba(245,158,11,0.12);color:var(--accent)">2</div>
+        <div class="step-title">Improved Execution</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">What Could Have Been Done Better</div>
+        <div class="improvement-list">
+          <div class="improvement-item">
+            <div class="ii-icon ii-fail">📋</div>
+            <div><strong>Early Feasibility & Risk Planning</strong> — Conduct thorough feasibility studies and establish risk registers before procurement begins.</div>
+          </div>
+          <div class="improvement-item">
+            <div class="ii-icon ii-fail">🏛️</div>
+            <div><strong>Independent PMO & Audits</strong> — Set up an autonomous Project Management Office with regular third-party financial audits to prevent corruption.</div>
+          </div>
+          <div class="improvement-item">
+            <div class="ii-icon ii-fail">🎯</div>
+            <div><strong>Strict Milestone Control</strong> — Define binding milestone gates with clear deliverables and escalation protocols for schedule deviations.</div>
+          </div>
+          <div class="improvement-item">
+            <div class="ii-icon ii-fail">⚡</div>
+            <div><strong>Parallel Execution with SS Logic</strong> — Use Start-to-Start dependencies to overlap compatible activities, dramatically reducing total project duration.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Activity Table — Improved</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">Critical Path (Float = 0)</span></div>
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-float"></div><span>Non-Critical — Free Float = 500 days</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Activity</th><th>Dep.</th><th>ES</th><th>EF</th><th>Duration</th><th>Float</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cp-row"><td>A</td><td>Feasibility &amp; Planning <span class="cp-badge">CP</span></td><td>—</td><td>0</td><td>120</td><td>120d</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>B</td><td>Stadium Construction <span class="cp-badge">CP</span></td><td>A (FS)</td><td>120</td><td>870</td><td>750d</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-neutral">C</td><td>Athlete Village</td><td>A (FS)</td><td>120</td><td>620</td><td>500d</td><td class="float-pos">500</td></tr>
+              <tr class="cp-row"><td>D</td><td>Transport &amp; Road Infrastructure <span class="cp-badge">CP</span></td><td>B (FS)</td><td>870</td><td>1,470</td><td>600d</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-neutral">E</td><td>Utilities (Power, Water, Drainage)</td><td>C (FS)</td><td>620</td><td>1,020</td><td>400d</td><td class="float-pos">500</td></tr>
+              <tr><td class="id-neutral">G</td><td>Security Deployment <em style="font-size:10px;color:#6b7280">(SS+80 on E)</em></td><td>E (SS)</td><td>700</td><td>900</td><td>200d</td><td class="float-pos">500</td></tr>
+              <tr class="cp-row"><td>F</td><td>IT Systems &amp; Broadcast Comms <span class="cp-badge">CP</span></td><td>D (FS)</td><td>1,470</td><td>1,720</td><td>250d</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>H</td><td>Final Operations &amp; Event Delivery <span class="cp-badge">CP</span></td><td>F, G (FS)</td><td>1,720</td><td>1,900</td><td>180d</td><td class="float-zero">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:#6b7280;margin-top:10px;padding:0 4px;">
+          ✦ <strong style="color:#94a3b8">Key improvement:</strong> Activities C, E, G run in parallel with the critical path B→D, using their 500-day float buffer. Security (G) begins via SS dependency just 80 days after Utilities (E) start, compressing the non-critical track further.
+        </p>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Network Diagram — Improved</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">Critical Path (Float = 0)</span></div>
+          <div class="cp-legend-item"><div class="cp-line-critical"></div>Critical Path link</div>
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-normal"></div>Non-critical (has float)</div>
+          <div class="cp-legend-item" style="margin-left:auto;font-size:11px;color:#facc15;font-weight:700;">Critical Path: A → B → D → F → H &nbsp;=&nbsp; 1,900 days</div>
+        </div>
+        <div class="net-diagram-wrap">
+          <svg class="net-svg" width="780" height="210" viewBox="0 0 780 210">
+            <defs>
+              <marker id="arr-cp2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#facc15"/>
+              </marker>
+              <marker id="arr-ncp2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.2)"/>
+              </marker>
+              <filter id="cp-glow2">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- CRITICAL PATH arrows: A→B→D→F→H -->
+            <line x1="90" y1="138" x2="132" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)"/>
+            <line x1="210" y1="138" x2="262" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+            <line x1="340" y1="138" x2="402" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+            <line x1="480" y1="138" x2="547" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+
+            <!-- NON-CRITICAL: A→C (parallel, starts same time) -->
+            <line x1="65" y1="156" x2="65" y2="172" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <line x1="65" y1="172" x2="152" y2="172" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <line x1="152" y1="172" x2="152" y2="81" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp2)"/>
+            <!-- C→E -->
+            <line x1="208" y1="63" x2="270" y2="63" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp2)"/>
+            <!-- E→G (SS) -->
+            <line x1="340" y1="63" x2="410" y2="63" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ncp2)"/>
+            <!-- G→H -->
+            <line x1="480" y1="63" x2="560" y2="63" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <line x1="560" y1="63" x2="560" y2="126" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp2)"/>
+
+            <!-- CRITICAL PATH nodes -->
+            <rect x="20" y="120" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow2)"/>
+            <text x="55" y="134" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">A</text>
+            <text x="55" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Feasibility</text>
+
+            <rect x="140" y="120" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow2)"/>
+            <text x="175" y="134" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">B</text>
+            <text x="175" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Stadium</text>
+
+            <rect x="270" y="120" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow2)"/>
+            <text x="305" y="134" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">D</text>
+            <text x="305" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Transport</text>
+
+            <rect x="410" y="120" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow2)"/>
+            <text x="445" y="134" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">F</text>
+            <text x="445" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">IT &amp; Comms</text>
+
+            <rect x="555" y="120" width="80" height="36" rx="8" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="2.5" filter="url(#cp-glow2)"/>
+            <text x="595" y="134" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">H</text>
+            <text x="595" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Final Ops</text>
+
+            <!-- NON-CRITICAL nodes -->
+            <rect x="140" y="45" width="68" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="174" y="59" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">C</text>
+            <text x="174" y="73" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Athlete Vill.</text>
+
+            <rect x="270" y="45" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="305" y="59" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">E</text>
+            <text x="305" y="73" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Utilities</text>
+
+            <rect x="410" y="45" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="445" y="59" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">G</text>
+            <text x="445" y="73" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Security</text>
+            <text x="380" y="56" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(255,255,255,0.3)">SS</text>
+
+            <!-- Float labels -->
+            <text x="174" y="33" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 500d</text>
+            <text x="305" y="33" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 500d</text>
+            <text x="445" y="33" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 500d</text>
+
+            <!-- Legend -->
+            <line x1="650" y1="40" x2="670" y2="40" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <text x="675" y="44" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">FS (non-critical)</text>
+            <line x1="650" y1="58" x2="670" y2="58" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="675" y="62" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">SS (non-critical)</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Gantt Chart — Improved (0–1,900 days)</div>
+        <div class="gantt-container">
+          <div class="gantt-header" style="background:rgba(250,204,21,0.04);">📅 Optimised Timeline &nbsp;·&nbsp; <span style="color:#facc15;font-size:10px;">⬛ = Critical Path</span> &nbsp;·&nbsp; <span style="color:#6366f1;font-size:10px;">▪ = Non-critical (has float)</span></div>
+          <div class="gantt-body">
+            <div class="gantt-row cp-gantt"><div class="gantt-label">A</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:0%;width:6.3%"></div></div><div class="gantt-meta">0 – 120</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">B</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:6.3%;width:39.5%"></div></div><div class="gantt-meta">120 – 870</div></div>
+            <div class="gantt-row"><div class="gantt-label id-neutral">C</div><div class="gantt-track"><div class="gantt-bar bar-neutral" style="left:6.3%;width:26.3%"></div></div><div class="gantt-meta">120 – 620</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">D</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:45.8%;width:31.6%"></div></div><div class="gantt-meta">870 – 1,470</div></div>
+            <div class="gantt-row"><div class="gantt-label id-neutral">E</div><div class="gantt-track"><div class="gantt-bar bar-neutral" style="left:32.6%;width:21.1%"></div></div><div class="gantt-meta">620 – 1,020</div></div>
+            <div class="gantt-row"><div class="gantt-label id-neutral">G</div><div class="gantt-track"><div class="gantt-bar bar-neutral" style="left:36.8%;width:10.5%"></div></div><div class="gantt-meta">700 – 900</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">F</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:77.4%;width:13.2%"></div></div><div class="gantt-meta">1,470 – 1,720</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">H</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:90.5%;width:9.5%"></div></div><div class="gantt-meta">1,720 – 1,900</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight-card">
+          <div class="ic-label">Actual Duration</div>
+          <div class="ic-value ic-fail">3,780</div>
+          <div class="ic-sub">days — with poor management</div>
+        </div>
+        <div class="insight-card">
+          <div class="ic-label">Improved Duration</div>
+          <div class="ic-value ic-accent">1,900</div>
+          <div class="ic-sub">days — potential savings of 49.7%</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ NASA ══════════ -->
+  <div id="nasa" class="section">
+    <div class="page-header success-header">
+      <div class="header-badge badge-success">🟢 Success Case</div>
+      <h1>NASA Mars<br>Perseverance Rover</h1>
+      <p>A benchmark in precision project management — delivering extreme technical complexity on time and within budget.</p>
+      <div class="meta-row">
+        <div class="meta-item">
+          <span class="meta-label">Responsible</span>
+          <span class="meta-value">NASA — Jet Propulsion Laboratory</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Total Cost</span>
+          <span class="meta-value success-val">USD 2.7 Billion</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Duration</span>
+          <span class="meta-value">5,107 days</span>
+        </div>
+      </div>
+    </div>
+    <div class="body-content">
+
+      <div class="step-badge">
+        <div class="step-num success-step">1</div>
+        <div class="step-title">Actual Execution</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Network Diagram — Actual</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">All activities are on the Critical Path (linear sequence, Float = 0)</span></div>
+          <div class="cp-legend-item" style="margin-left:auto;font-size:11px;color:#facc15;font-weight:700;">Critical Path: A → B → C → D → E → F &nbsp;=&nbsp; 5,107 days</div>
+        </div>
+        <div class="net-diagram-wrap">
+          <svg class="net-svg" width="720" height="110" viewBox="0 0 720 110">
+            <defs>
+              <marker id="arr-success-cp" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#facc15"/>
+              </marker>
+              <filter id="cp-glow3">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- All arrows are critical -->
+            <line x1="90" y1="55" x2="133" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="218" y1="55" x2="253" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="338" y1="55" x2="373" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="458" y1="55" x2="493" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="578" y1="55" x2="611" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+
+            <rect x="10" y="37" width="80" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow3)"/>
+            <text x="50" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">A</text>
+            <text x="50" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Mission Plan</text>
+
+            <rect x="140" y="37" width="78" height="36" rx="8" fill="rgba(250,204,21,0.12)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow3)"/>
+            <text x="179" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">B</text>
+            <text x="179" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Rover Design</text>
+
+            <rect x="260" y="37" width="78" height="36" rx="8" fill="rgba(250,204,21,0.12)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow3)"/>
+            <text x="299" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">C</text>
+            <text x="299" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Manufacturing</text>
+
+            <rect x="380" y="37" width="78" height="36" rx="8" fill="rgba(250,204,21,0.12)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow3)"/>
+            <text x="419" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">D</text>
+            <text x="419" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Testing</text>
+
+            <rect x="500" y="37" width="78" height="36" rx="8" fill="rgba(250,204,21,0.12)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow3)"/>
+            <text x="539" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">E</text>
+            <text x="539" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Launch Prep</text>
+
+            <rect x="618" y="37" width="88" height="36" rx="8" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="2.5" filter="url(#cp-glow3)"/>
+            <text x="662" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">F</text>
+            <text x="662" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Launch &amp; Land</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">WBS — Work Breakdown Structure</div>
+        <div class="wbs-container">
+          <div class="wbs-tree">
+            <!-- Root -->
+            <div class="wbs-root root-success">NASA Mars Perseverance Rover Mission</div>
+            <div class="wbs-vline"></div>
+            <!-- L1 columns -->
+            <div class="wbs-l1-cols">
+              <!-- 1. Mission Planning -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-success">1.0<br>Mission Planning</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">1.1 Science Objectives</div>
+                  <div class="wbs-l2-node">1.2 Requirements Def.</div>
+                  <div class="wbs-l2-node">1.3 Budget & Schedule</div>
+                </div>
+              </div>
+              <!-- 2. Rover Design -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-success">2.0<br>Rover Design</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">2.1 Systems Architecture</div>
+                  <div class="wbs-l2-node">2.2 Subsystem Design</div>
+                  <div class="wbs-l2-node">2.3 PDR / CDR Reviews</div>
+                  <div class="wbs-l2-node">2.4 CAD & Simulation</div>
+                </div>
+              </div>
+              <!-- 3. Manufacturing -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-success">3.0<br>Manufacturing</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">3.1 Chassis Fabrication</div>
+                  <div class="wbs-l2-node">3.2 Science Instruments</div>
+                  <div class="wbs-l2-node">3.3 Power Systems</div>
+                  <div class="wbs-l2-node">3.4 Integration</div>
+                </div>
+              </div>
+              <!-- 4. Testing -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-success">4.0<br>Testing</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">4.1 Environmental Tests</div>
+                  <div class="wbs-l2-node">4.2 Thermal-Vacuum</div>
+                  <div class="wbs-l2-node">4.3 EDL Simulation</div>
+                  <div class="wbs-l2-node">4.4 Verification</div>
+                </div>
+              </div>
+              <!-- 5. Launch Prep -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-success">5.0<br>Launch Prep</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">5.1 Atlas V Integration</div>
+                  <div class="wbs-l2-node">5.2 Range Safety</div>
+                  <div class="wbs-l2-node">5.3 Flight Readiness</div>
+                </div>
+              </div>
+              <!-- 6. Launch & Landing -->
+              <div class="wbs-l1-col">
+                <div class="wbs-l1-node l1-success">6.0<br>Launch & Landing</div>
+                <div class="sub-vline"></div>
+                <div class="wbs-l2-wrap">
+                  <div class="wbs-l2-node">6.1 Launch Event</div>
+                  <div class="wbs-l2-node">6.2 Cruise Phase</div>
+                  <div class="wbs-l2-node">6.3 EDL (7 Min Terror)</div>
+                  <div class="wbs-l2-node">6.4 Surface Ops Start</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Activity Table — Actual</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">Entire project is the Critical Path — every activity has Float = 0</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Activity</th><th>Dep.</th><th>Start</th><th>Finish</th><th>Duration</th><th>Cost $M</th><th>Float</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cp-row"><td>A</td><td>Mission Planning <span class="cp-badge">CP</span></td><td>—</td><td>0</td><td>1,200</td><td>1,200d</td><td>300</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>B</td><td>Rover Design <span class="cp-badge">CP</span></td><td>A (FS)</td><td>1,200</td><td>2,700</td><td>1,500d</td><td>900</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>C</td><td>Manufacturing <span class="cp-badge">CP</span></td><td>B (FS)</td><td>2,700</td><td>3,800</td><td>1,100d</td><td>600</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>D</td><td>Testing &amp; Verification <span class="cp-badge">CP</span></td><td>C (FS)</td><td>3,800</td><td>4,800</td><td>1,000d</td><td>500</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>E</td><td>Launch Preparation <span class="cp-badge">CP</span></td><td>D (FS)</td><td>4,800</td><td>5,100</td><td>300d</td><td>350</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>F</td><td>Launch &amp; Landing <span class="cp-badge">CP</span></td><td>E (FS)</td><td>5,100</td><td>5,107</td><td>7d</td><td>50</td><td class="float-zero">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Gantt Chart — Actual (0–5,107 days)</div>
+        <div class="gantt-container">
+          <div class="gantt-header" style="background:rgba(250,204,21,0.04);">📅 Timeline Visualisation &nbsp;·&nbsp; <span style="color:#facc15;font-size:10px;">All bars = Critical Path</span></div>
+          <div class="gantt-body">
+            <div class="gantt-row cp-gantt"><div class="gantt-label">A</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:0%;width:23.5%"></div></div><div class="gantt-meta">0 – 1,200</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">B</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:23.5%;width:29.4%"></div></div><div class="gantt-meta">1,200 – 2,700</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">C</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:52.9%;width:21.5%"></div></div><div class="gantt-meta">2,700 – 3,800</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">D</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:74.4%;width:19.6%"></div></div><div class="gantt-meta">3,800 – 4,800</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">E</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:94%;width:5.9%"></div></div><div class="gantt-meta">4,800 – 5,100</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">F</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:99.8%;width:0.2%"></div></div><div class="gantt-meta">5,100 – 5,107</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Step 2 -->
+      <div class="step-badge">
+        <div class="step-num" style="background:rgba(245,158,11,0.12);color:var(--accent)">2</div>
+        <div class="step-title">Optimised Execution</div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">What Could Be Done Even Better</div>
+        <div class="improvement-list">
+          <div class="improvement-item">
+            <div class="ii-icon ii-success">🔧</div>
+            <div><strong>Modular Design Architecture</strong> — Designing the rover in independent modules allows parallel development and reduces bottlenecks in the critical path.</div>
+          </div>
+          <div class="improvement-item">
+            <div class="ii-icon ii-success">🤖</div>
+            <div><strong>AI-Based Simulations</strong> — Using AI-driven digital twins for testing reduces physical test cycles and accelerates the validation phase.</div>
+          </div>
+          <div class="improvement-item">
+            <div class="ii-icon ii-success">♻️</div>
+            <div><strong>Reusable Components</strong> — Leveraging components from prior missions (Curiosity) reduces design time and manufacturing cycles significantly.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Activity Table — Optimised</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">Critical Path (Float = 0)</span></div>
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-float"></div><span>Parallel sub-track (has float)</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Activity</th><th>Dep.</th><th>ES</th><th>EF</th><th>Duration</th><th>Float</th></tr>
+            </thead>
+            <tbody>
+              <tr class="cp-row"><td>A</td><td>Digital Planning &amp; Requirements <span class="cp-badge">CP</span></td><td>—</td><td>0</td><td>1,000</td><td>1,000d</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>B</td><td>Modular System Design <span class="cp-badge">CP</span></td><td>A (FS)</td><td>1,000</td><td>2,200</td><td>1,200d</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>C</td><td>Chassis Assembly (Critical Sub-system) <span class="cp-badge">CP</span></td><td>B (FS)</td><td>2,200</td><td>3,100</td><td>900d</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-neutral">C2</td><td>Instrument Sub-assembly <em style="font-size:10px;color:#6b7280">(parallel to C)</em></td><td>B (FS)</td><td>2,200</td><td>3,000</td><td>800d</td><td class="float-pos">~100</td></tr>
+              <tr class="cp-row"><td>D</td><td>Environmental &amp; AI Testing <span class="cp-badge">CP</span></td><td>C, C2 (FS)</td><td>3,100</td><td>3,800</td><td>700d</td><td class="float-zero">0</td></tr>
+              <tr><td class="id-neutral">D2</td><td>Systems Validation <em style="font-size:10px;color:#6b7280">(parallel to D)</em></td><td>C2 (FS)</td><td>3,000</td><td>3,750</td><td>750d</td><td class="float-pos">~50</td></tr>
+              <tr class="cp-row"><td>E</td><td>Atlas V Integration &amp; Launch Prep <span class="cp-badge">CP</span></td><td>D, D2 (FS)</td><td>3,800</td><td>4,050</td><td>250d</td><td class="float-zero">0</td></tr>
+              <tr class="cp-row"><td>F</td><td>Launch &amp; Mars Landing <span class="cp-badge">CP</span></td><td>E (FS)</td><td>4,050</td><td>4,057</td><td>7d</td><td class="float-zero">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:#6b7280;margin-top:10px;padding:0 4px;">
+          ✦ <strong style="color:#94a3b8">Key optimisation:</strong> Splitting manufacturing into Chassis (C) and Instruments (C2) and testing into Environmental (D) and Systems Validation (D2) allows parallel execution. Both sub-tracks converge before the next phase, shaving ~1,050 days off the original 5,107-day plan.
+        </p>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Network Diagram — Optimised</div>
+        <div class="cp-legend">
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-critical"></div><span style="color:#facc15">Critical Path (Float = 0)</span></div>
+          <div class="cp-legend-item"><div class="cp-dot cp-dot-normal"></div><span>Parallel sub-track (has float)</span></div>
+          <div class="cp-legend-item" style="margin-left:auto;font-size:11px;color:#facc15;font-weight:700;">Critical Path: A → B → C → D → E → F &nbsp;=&nbsp; 4,057 days</div>
+        </div>
+        <div class="net-diagram-wrap">
+          <!-- Improved NASA: C (Assembly) splits into C1 (Chassis) + C2 (Instruments) in parallel,
+               then D (AI Testing) also splits into D1 (Env. Testing) + D2 (Systems Validation) in parallel.
+               The main spine is still A→B→C→D→E→F all critical.
+               C2 and D2 are parallel non-critical sub-tracks with float. -->
+          <svg class="net-svg" width="760" height="220" viewBox="0 0 760 220">
+            <defs>
+              <marker id="arr-cp3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#facc15"/>
+              </marker>
+              <marker id="arr-ncp3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.2)"/>
+              </marker>
+              <filter id="cp-glow4">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- CRITICAL PATH spine: A→B→C→D→E→F (bottom lane y=150) -->
+            <line x1="88" y1="150" x2="123" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="200" y1="150" x2="243" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="320" y1="150" x2="363" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="440" y1="150" x2="483" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="560" y1="150" x2="607" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+
+            <!-- PARALLEL sub-tracks from C: C splits into C (chassis) bottom + C2 (instruments) top -->
+            <!-- B → C2 (instruments, top lane y=65) -->
+            <line x1="165" y1="132" x2="165" y2="75" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+            <line x1="165" y1="75" x2="248" y2="75" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arr-ncp3)"/>
+            <!-- C2 → D (converge back, instruments finish feeds into AI testing) -->
+            <line x1="318" y1="75" x2="358" y2="75" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+            <line x1="358" y1="75" x2="358" y2="132" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arr-ncp3)"/>
+            <!-- D → D2 (parallel systems validation, top) -->
+            <line x1="405" y1="132" x2="405" y2="75" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+            <line x1="405" y1="75" x2="488" y2="75" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arr-ncp3)"/>
+            <!-- D2 → E (converge) -->
+            <line x1="558" y1="75" x2="595" y2="75" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+            <line x1="595" y1="75" x2="595" y2="132" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arr-ncp3)"/>
+
+            <!-- ── CRITICAL NODES (gold, spine) ── -->
+            <!-- A -->
+            <rect x="10" y="132" width="78" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow4)"/>
+            <text x="49" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#facc15">A</text>
+            <text x="49" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Digital Plan</text>
+            <!-- B -->
+            <rect x="130" y="132" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow4)"/>
+            <text x="165" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#facc15">B</text>
+            <text x="165" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Mod. Design</text>
+            <!-- C (Chassis assembly - critical) -->
+            <rect x="250" y="132" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow4)"/>
+            <text x="285" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#facc15">C</text>
+            <text x="285" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Chassis Assy</text>
+            <!-- D (Env. Testing - critical) -->
+            <rect x="370" y="132" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow4)"/>
+            <text x="405" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#facc15">D</text>
+            <text x="405" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Env. Testing</text>
+            <!-- E -->
+            <rect x="490" y="132" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow4)"/>
+            <text x="525" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#facc15">E</text>
+            <text x="525" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Launch Prep</text>
+            <!-- F -->
+            <rect x="610" y="132" width="78" height="36" rx="8" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="2.5" filter="url(#cp-glow4)"/>
+            <text x="649" y="146" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#facc15">F</text>
+            <text x="649" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Launch &amp; Land</text>
+
+            <!-- ── NON-CRITICAL PARALLEL NODES (dim) ── -->
+            <!-- C2: Instrument Sub-assembly -->
+            <rect x="248" y="57" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="283" y="70" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="rgba(255,255,255,0.4)">C2</text>
+            <text x="283" y="84" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6b7280">Instrument Assy</text>
+            <text x="283" y="46" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: ~100d</text>
+
+            <!-- D2: Systems Validation -->
+            <rect x="488" y="57" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="523" y="70" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="rgba(255,255,255,0.4)">D2</text>
+            <text x="523" y="84" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6b7280">Sys. Validation</text>
+            <text x="523" y="46" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: ~50d</text>
+
+            <!-- Labels -->
+            <text x="285" y="195" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Parallel track</text>
+            <text x="405" y="195" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Converge</text>
+            <text x="523" y="195" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Parallel track</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">Gantt Chart — Optimised (0–4,057 days)</div>
+        <div class="gantt-container">
+          <div class="gantt-header" style="background:rgba(250,204,21,0.04);">📅 Optimised Timeline &nbsp;·&nbsp; <span style="color:#facc15;font-size:10px;">⬛ = Critical Path</span> &nbsp;·&nbsp; <span style="color:#6366f1;font-size:10px;">▪ = Parallel sub-track</span></div>
+          <div class="gantt-body">
+            <div class="gantt-row cp-gantt"><div class="gantt-label">A</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:0%;width:24.6%"></div></div><div class="gantt-meta">0 – 1,000</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">B</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:24.6%;width:29.6%"></div></div><div class="gantt-meta">1,000 – 2,200</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">C</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:54.2%;width:22.2%"></div></div><div class="gantt-meta">2,200 – 3,100</div></div>
+            <div class="gantt-row"><div class="gantt-label id-neutral" style="font-size:10px;">C2</div><div class="gantt-track"><div class="gantt-bar" style="left:54.2%;width:19.7%;background:linear-gradient(to right,#6366f1,rgba(99,102,241,0.5));box-shadow:0 0 6px rgba(99,102,241,0.3)"></div></div><div class="gantt-meta">2,200 – 3,000</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">D</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:76.4%;width:17.2%"></div></div><div class="gantt-meta">3,100 – 3,800</div></div>
+            <div class="gantt-row"><div class="gantt-label id-neutral" style="font-size:10px;">D2</div><div class="gantt-track"><div class="gantt-bar" style="left:73.9%;width:18.5%;background:linear-gradient(to right,#6366f1,rgba(99,102,241,0.5));box-shadow:0 0 6px rgba(99,102,241,0.3)"></div></div><div class="gantt-meta">3,000 – 3,750</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">E</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:93.6%;width:6.2%"></div></div><div class="gantt-meta">3,800 – 4,050</div></div>
+            <div class="gantt-row cp-gantt"><div class="gantt-label">F</div><div class="gantt-track"><div class="gantt-bar bar-critical" style="left:99.8%;width:0.2%"></div></div><div class="gantt-meta">4,050 – 4,057</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight-card">
+          <div class="ic-label">Actual Duration</div>
+          <div class="ic-value ic-success">5,107</div>
+          <div class="ic-sub">days — already on-schedule</div>
+        </div>
+        <div class="insight-card">
+          <div class="ic-label">Optimised Duration</div>
+          <div class="ic-value ic-accent">4,057</div>
+          <div class="ic-sub">days — 20.6% time reduction possible</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ RECOMMENDATIONS ══════════ -->
+  <div id="Rec" class="section">
+    <div class="page-header">
+      <div class="header-badge badge-rec">💡 Final Analysis</div>
+      <h1>Recommendations &<br>Key Takeaways</h1>
+      <p>Distilled lessons from both case studies — principles applicable to any large-scale project.</p>
+    </div>
+    <div class="body-content">
+
+      <div class="block-title">Core Principles for Project Success</div>
+      <div class="rec-grid">
+        <div class="rec-card">
+          <div class="rc-num">01</div>
+          <div class="rc-title">Establish a Strong PMO</div>
+          <div class="rc-body">Set up an independent Project Management Office with clear authority, reporting lines, and regular third-party audits. Without a strong governance body, scope creep and corruption flourish.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rc-num">02</div>
+          <div class="rc-title">Define the Critical Path</div>
+          <div class="rc-body">Map all activity dependencies before execution begins. Identify the critical path and protect it with strict milestone gates and escalation procedures for any slippage.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rc-num">03</div>
+          <div class="rc-title">Proactive Risk Management</div>
+          <div class="rc-body">Maintain a live risk register. Model cost and schedule risk at each phase gate. NASA's success was driven by its ability to anticipate and mitigate risks well before they materialised.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rc-num">04</div>
+          <div class="rc-title">Parallelise Where Possible</div>
+          <div class="rc-body">Use Start-to-Start and Finish-to-Start dependencies intelligently. The Delhi CWG could have saved nearly 1,880 days simply by overlapping compatible activities with proper coordination.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rc-num">05</div>
+          <div class="rc-title">Invest in Planning Upfront</div>
+          <div class="rc-body">Every hour spent in detailed planning saves multiple hours in execution. Feasibility studies, requirements definition, and scope lock-in prevent the cascading delays seen in Delhi.</div>
+        </div>
+        <div class="rec-card">
+          <div class="rc-num">06</div>
+          <div class="rc-title">Leverage Technology</div>
+          <div class="rc-body">AI simulations, digital twins, and modular reusable components reduce both time and cost. Technology investment in planning phases pays exponential returns in execution.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="block-title">Comparative Summary</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Dimension</th><th style="color:var(--fail)">Delhi CWG 2010</th><th style="color:var(--success)">NASA Perseverance</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Governance</td><td style="color:#f87171">Fragmented, corrupt</td><td style="color:#34d399">Strong, centralised JPL</td></tr>
+            <tr><td>Planning Quality</td><td style="color:#f87171">Inadequate feasibility</td><td style="color:#34d399">Rigorous, phased</td></tr>
+            <tr><td>Risk Management</td><td style="color:#f87171">Reactive, absent</td><td style="color:#34d399">Proactive, systematic</td></tr>
+            <tr><td>Schedule Control</td><td style="color:#f87171">Poor milestone control</td><td style="color:#34d399">Strict gate reviews</td></tr>
+            <tr><td>Cost Control</td><td style="color:#f87171">4× overrun</td><td style="color:#34d399">Within budget</td></tr>
+            <tr><td>Dependency Logic</td><td style="color:#f87171">Sequential, inefficient</td><td style="color:#34d399">Structured FS chain</td></tr>
+            <tr><td>Outcome</td><td style="color:#f87171">Event held, PM failure</td><td style="color:#34d399">Full mission success</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="compare-card">
+        <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:14px;">The Bottom Line</h3>
+        <p style="color:#94a3b8;font-size:14px;line-height:1.8;">
+          Project success is not determined by the size of the budget, the prestige of the client, or even the technical complexity of the deliverable. It is determined by the <strong style="color:var(--text)">quality of decisions made before the first shovel hits the ground</strong>. NASA sent a robot to Mars on schedule and on budget. India could not build stadiums in time for its guests. The difference was entirely in planning, governance, and discipline.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end .content -->
+
+<script>
+  function showSection(id, btn) {
+    // 1. Remove active class from all sections and buttons
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    // 2. Show the selected section
+    const targetSection = document.getElementById(id);
+    if (targetSection) {
+      targetSection.classList.add('active');
+    }
+
+    // 3. Highlight the correct button
+    if (btn) {
+      btn.classList.add('active');
+    } else {
+      // If page refreshed, find the button that belongs to this ID
+      const buttons = document.querySelectorAll('.nav-btn');
+      buttons.forEach(b => {
+        if (b.getAttribute('onclick').includes(id)) {
+          b.classList.add('active');
+        }
+      });
+    }
+
+    // 4. Save the choice to the browser so it remembers after refresh
+    localStorage.setItem('lastSection', id);
+    
+    // 5. Scroll back to top
+    document.querySelector('.content').scrollTop = 0;
+  }
+
+  // ON LOAD: Check if we have a saved section, otherwise default to overview
+  window.onload = function() {
+    const savedSection = localStorage.getItem('lastSection') || 'overview';
+    showSection(savedSection);
+  };
+</script>
+
+</body>
+</html>
