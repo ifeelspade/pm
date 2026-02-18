@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Project Management Analysis - Group 10</title>
+  <title>Project Management Case Studies</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -774,7 +774,7 @@
 <!-- ─── SIDEBAR ─── -->
 <div class="sidebar">
   <div class="sidebar-brand">
-    <span class="logo-tag">GROUP 10</span>
+    <span class="logo-tag">PM Case Studies</span>
     <h1>Project Management Analysis</h1>
   </div>
   <nav class="nav">
@@ -797,7 +797,7 @@
     </button>
   </nav>
   <div class="sidebar-footer">
-    Project Management · Group 10
+    Project Management · Case Study Analysis
   </div>
 </div>
 
@@ -808,7 +808,7 @@
   <div id="overview" class="section active">
     <div class="page-header">
       <div class="header-badge badge-overview">📊 Comparative Study</div>
-      <h1>Project Management<br>Analysis</h1>
+      <h1>Project Management<br>Case Study Overview</h1>
       <p>A comparative analysis of two landmark projects — examining what makes a project succeed or fail at scale.</p>
     </div>
     <div class="body-content">
@@ -834,11 +834,15 @@
           <span class="verdict verdict-success">● Success</span>
           <h3 style="margin-top:12px">NASA Mars<br>Perseverance Rover</h3>
           <p>Led by NASA's Jet Propulsion Laboratory (JPL). Objective was to design, build, test, and successfully land a rover on Mars for scientific exploration.</p>
-          <p style="margin-top:10px">Considered a success due to disciplined planning, rigorous testing, strong systems engineering, effective risk mitigation, and strict schedule control.</p>
+          <p style="margin-top:10px">Considered a <strong style="color:var(--success)">project management success</strong> despite 21.4% cost overrun. Strong governance, rigorous testing, and strict schedule control delivered 100% of objectives on time. Cost increase due to sample caching technical issues was managed transparently through program reallocation.</p>
           <div class="card-stat">
             <div class="card-stat-item">
-              <span class="cs-label">Total Cost</span>
-              <span class="cs-val" style="color:var(--success)">$2.7 Billion</span>
+              <span class="cs-label">Baseline Budget</span>
+              <span class="cs-val" style="color:var(--accent)">$2.47B</span>
+            </div>
+            <div class="card-stat-item">
+              <span class="cs-label">Final Cost</span>
+              <span class="cs-val" style="color:#ff6b35">$3.0B (+21.4%)</span>
             </div>
             <div class="card-stat-item">
               <span class="cs-label">Timeline</span>
@@ -870,9 +874,9 @@
           <div class="ic-sub">If better managed (3,780 → 1,900 days)</div>
         </div>
         <div class="insight-card">
-          <div class="ic-label">NASA — On Budget</div>
-          <div class="ic-value ic-success">✓</div>
-          <div class="ic-sub">$2.7B delivered within scope</div>
+          <div class="ic-label">NASA — Cost Overrun</div>
+          <div class="ic-value" style="color:#ff6b35">+21.4%</div>
+          <div class="ic-sub">Managed, transparent ($2.47B → $3.0B)</div>
         </div>
         <div class="insight-card">
           <div class="ic-label">NASA — Timeline Reduction Possible</div>
@@ -889,7 +893,7 @@
     <div class="page-header fail-header">
       <div class="header-badge badge-fail">🔴 Failure Case</div>
       <h1>Delhi Commonwealth<br>Games 2010</h1>
-      <p>An event with governance failure, cost escalation, and schedule collapse at national scale.</p>
+      <p>A case study in governance failure, cost escalation, and schedule collapse at national scale.</p>
       <div class="meta-row">
         <div class="meta-item">
           <span class="meta-label">Responsible</span>
@@ -923,101 +927,87 @@
           <div class="cp-legend-item" style="margin-left:auto;font-size:11px;color:#facc15;font-weight:700;">Critical Path: A → B → D → F → H &nbsp;=&nbsp; 3,780 days</div>
         </div>
         <div class="net-diagram-wrap">
-            <svg class="net-svg" width="780" height="200" viewBox="0 0 780 200">
-              <defs>
-                <marker id="arr-cp" markerWidth="5" markerHeight="5" refX="3.5" refY="2" orient="auto">
-                  <path d="M0,0 L0,4 L4,2 z" fill="#facc15"/>
-                </marker>
-                <marker id="arr-ncp-fail" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                  <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.2)"/>
-                </marker>
-                <filter id="cp-glow"
-                        x="-200%" y="-200%"
-                        width="500%" height="500%">
-                  <feGaussianBlur stdDeviation="2" result="blur"/>
-                  <feMerge>
-                    <feMergeNode in="blur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
+          <svg class="net-svg" width="780" height="200" viewBox="0 0 780 200">
+            <defs>
+              <marker id="arr-cp" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#facc15"/>
+              </marker>
+              <marker id="arr-ncp-fail" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.2)"/>
+              </marker>
+              <filter id="cp-glow">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
 
+            <!-- ── CRITICAL PATH arrows: A→B→D→F→H (golden, glowing) ── -->
+            <line x1="90" y1="130" x2="140" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)" />
+            <line x1="210" y1="130" x2="270" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)" />
+            <line x1="340" y1="130" x2="410" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)" />
+            <line x1="480" y1="130" x2="555" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)" />
 
+            <!-- ── NON-CRITICAL PATH (dim) ── -->
+            <!-- A → C branch -->
+            <line x1="65" y1="148" x2="65" y2="166" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <line x1="65" y1="166" x2="152" y2="166" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <line x1="152" y1="166" x2="152" y2="73" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
+            <!-- C→E -->
+            <line x1="208" y1="55" x2="270" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
+            <!-- E→G (SS, dashed) -->
+            <line x1="340" y1="55" x2="410" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ncp-fail)"/>
+            <!-- G→H -->
+            <line x1="480" y1="55" x2="560" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <line x1="560" y1="55" x2="560" y2="118" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
 
-              </defs>
+            <!-- ── CRITICAL PATH nodes (golden glow) ── -->
+            <!-- A -->
+            <rect x="20" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+            <text x="55" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">A</text>
+            <text x="55" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Approval</text>
+            <!-- B -->
+            <rect x="140" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+            <text x="175" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">B</text>
+            <text x="175" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Stadium</text>
+            <!-- D -->
+            <rect x="270" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+            <text x="305" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">D</text>
+            <text x="305" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Transport</text>
+            <!-- F -->
+            <rect x="410" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
+            <text x="445" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">F</text>
+            <text x="445" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">IT Systems</text>
+            <!-- H (end) -->
+            <rect x="555" y="112" width="80" height="36" rx="8" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="2.5" filter="url(#cp-glow)"/>
+            <text x="595" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">H</text>
+            <text x="595" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Event Ops</text>
 
-              <!-- ── NON-CRITICAL PATH (dim) ── -->
-              <!-- A → C branch -->
-              <line x1="65" y1="148" x2="65" y2="166" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-              <line x1="65" y1="166" x2="152" y2="166" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-              <line x1="152" y1="166" x2="152" y2="73" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
-              <!-- C→E -->
-              <line x1="208" y1="55" x2="270" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
-              <!-- E→G (SS, dashed) -->
-              <line x1="340" y1="55" x2="410" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-ncp-fail)"/>
-              <!-- G→H -->
-              <line x1="480" y1="55" x2="560" y2="55" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-              <line x1="560" y1="55" x2="560" y2="118" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" marker-end="url(#arr-ncp-fail)"/>
+            <!-- ── NON-CRITICAL nodes (dim) ── -->
+            <!-- C -->
+            <rect x="140" y="37" width="68" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="174" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">C</text>
+            <text x="174" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Athlete Vill.</text>
+            <!-- E -->
+            <rect x="270" y="37" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="305" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">E</text>
+            <text x="305" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Utilities</text>
+            <!-- G -->
+            <rect x="410" y="37" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="445" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">G</text>
+            <text x="445" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Security</text>
+            <text x="377" y="48" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(255,255,255,0.3)">SS</text>
 
-              <!-- ── CRITICAL PATH nodes (golden glow) ── -->
-              <!-- A -->
-              <rect x="20" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
-              <text x="55" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">A</text>
-              <text x="55" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Approval</text>
-              <!-- B -->
-              <rect x="140" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
-              <text x="175" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">B</text>
-              <text x="175" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Stadium</text>
-              <!-- D -->
-              <rect x="270" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
-              <text x="305" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">D</text>
-              <text x="305" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Transport</text>
-              <!-- F -->
-              <rect x="410" y="112" width="70" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow)"/>
-              <text x="445" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">F</text>
-              <text x="445" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">IT Systems</text>
-              <!-- H (end) -->
-              <rect x="555" y="112" width="80" height="36" rx="8" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="2.5" filter="url(#cp-glow)"/>
-              <text x="595" y="126" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">H</text>
-              <text x="595" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#94a3b8">Event Ops</text>
+            <!-- Float labels on non-critical -->
+            <text x="174" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
+            <text x="305" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
+            <text x="445" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
 
-              <!-- ── NON-CRITICAL nodes (dim) ── -->
-              <!-- C -->
-              <rect x="140" y="37" width="68" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-              <text x="174" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">C</text>
-              <text x="174" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Athlete Vill.</text>
-              <!-- E -->
-              <rect x="270" y="37" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-              <text x="305" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">E</text>
-              <text x="305" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Utilities</text>
-              <!-- G -->
-              <rect x="410" y="37" width="70" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-              <text x="445" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="rgba(255,255,255,0.4)">G</text>
-              <text x="445" y="65" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">Security</text>
-              <text x="377" y="48" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(255,255,255,0.3)">SS</text>
-
-              <!-- Float labels on non-critical -->
-              <text x="174" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
-              <text x="305" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
-              <text x="445" y="25" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#6366f1">Float: 1,100d</text>
-
-              <!-- Legend -->
-              <line x1="650" y1="38" x2="670" y2="38" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-              <text x="675" y="42" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">FS dependency</text>
-              <line x1="650" y1="56" x2="670" y2="56" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,3"/>
-              <text x="675" y="60" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">SS dependency</text>
-
-              <text x="174" y="25" text-anchor="middle" font-size="8" fill="#6366f1">Float: 1,100d</text>
-              <text x="305" y="25" text-anchor="middle" font-size="8" fill="#6366f1">Float: 1,100d</text>
-              <text x="445" y="25" text-anchor="middle" font-size="8" fill="#6366f1">Float: 1,100d</text>
-
-              <!-- ── CRITICAL PATH arrows: A→B→D→F→H (golden, glowing) ── -->
-              <g>
-                <line x1="90" y1="130" x2="132" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
-                <line x1="210" y1="130" x2="262" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
-                <line x1="340" y1="130" x2="402" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
-                <line x1="480" y1="130" x2="542" y2="130" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp)"/>
-              </g>
-            </svg>
+            <!-- Legend -->
+            <line x1="650" y1="38" x2="670" y2="38" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+            <text x="675" y="42" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">FS dependency</text>
+            <line x1="650" y1="56" x2="670" y2="56" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="675" y="60" font-family="DM Sans,sans-serif" font-size="9" fill="#6b7280">SS dependency</text>
+          </svg>
         </div>
       </div>
 
@@ -1240,10 +1230,10 @@
             </defs>
 
             <!-- CRITICAL PATH arrows: A→B→D→F→H -->
-            <line x1="90" y1="138" x2="132" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)"/>
-            <line x1="210" y1="138" x2="262" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
-            <line x1="340" y1="138" x2="402" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
-            <line x1="480" y1="138" x2="547" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+            <line x1="90" y1="138" x2="140" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+            <line x1="210" y1="138" x2="270" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+            <line x1="340" y1="138" x2="410" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
+            <line x1="480" y1="138" x2="555" y2="138" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp2)" />
 
             <!-- NON-CRITICAL: A→C (parallel, starts same time) -->
             <line x1="65" y1="156" x2="65" y2="172" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
@@ -1351,8 +1341,12 @@
           <span class="meta-value">NASA — Jet Propulsion Laboratory</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Total Cost</span>
-          <span class="meta-value success-val">USD 2.7 Billion</span>
+          <span class="meta-label">Baseline Budget</span>
+          <span class="meta-value" style="color:var(--accent)">USD 2.47 Billion (2017)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Final Cost</span>
+          <span class="meta-value" style="color:#ff6b35">USD 3.0 Billion (+21.4%)</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Duration</span>
@@ -1385,11 +1379,11 @@
               </filter>
             </defs>
             <!-- All arrows are critical -->
-            <line x1="90" y1="55" x2="133" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
-            <line x1="218" y1="55" x2="253" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
-            <line x1="338" y1="55" x2="373" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
-            <line x1="458" y1="55" x2="493" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
-            <line x1="578" y1="55" x2="611" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="90" y1="55" x2="140" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="218" y1="55" x2="260" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="338" y1="55" x2="380" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="458" y1="55" x2="500" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
+            <line x1="578" y1="55" x2="618" y2="55" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-success-cp)" />
 
             <rect x="10" y="37" width="80" height="36" rx="8" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2" filter="url(#cp-glow3)"/>
             <text x="50" y="51" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#facc15">A</text>
@@ -1614,11 +1608,11 @@
             </defs>
 
             <!-- CRITICAL PATH spine: A→B→C→D→E→F (bottom lane y=150) -->
-            <line x1="88" y1="150" x2="123" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
-            <line x1="200" y1="150" x2="243" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
-            <line x1="320" y1="150" x2="363" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
-            <line x1="440" y1="150" x2="483" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
-            <line x1="560" y1="150" x2="607" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="88" y1="150" x2="130" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="200" y1="150" x2="250" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="320" y1="150" x2="370" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="440" y1="150" x2="490" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
+            <line x1="560" y1="150" x2="610" y2="150" stroke="#facc15" stroke-width="2.5" marker-end="url(#arr-cp3)" />
 
             <!-- PARALLEL sub-tracks from C: C splits into C (chassis) bottom + C2 (instruments) top -->
             <!-- B → C2 (instruments, top lane y=65) -->
@@ -1793,41 +1787,15 @@
 
 <script>
   function showSection(id, btn) {
-    // 1. Remove active class from all sections and buttons
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
-    // 2. Show the selected section
-    const targetSection = document.getElementById(id);
-    if (targetSection) {
-      targetSection.classList.add('active');
-    }
-
-    // 3. Highlight the correct button
-    if (btn) {
-      btn.classList.add('active');
-    } else {
-      // If page refreshed, find the button that belongs to this ID
-      const buttons = document.querySelectorAll('.nav-btn');
-      buttons.forEach(b => {
-        if (b.getAttribute('onclick').includes(id)) {
-          b.classList.add('active');
-        }
-      });
-    }
-
-    // 4. Save the choice to the browser so it remembers after refresh
-    localStorage.setItem('lastSection', id);
-    
-    // 5. Scroll back to top
+    document.getElementById(id).classList.add('active');
+    if (btn) btn.classList.add('active');
     document.querySelector('.content').scrollTop = 0;
   }
 
-  // ON LOAD: Check if we have a saved section, otherwise default to overview
-  window.onload = function() {
-    const savedSection = localStorage.getItem('lastSection') || 'overview';
-    showSection(savedSection);
-  };
+  // Set overview button active on load
+  document.querySelector('.overview-btn').classList.add('active');
 </script>
 
 </body>
